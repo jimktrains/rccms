@@ -1,0 +1,249 @@
+body {
+	text-align:center;
+	background: url(../_images/structure/red-shade-top.gif) repeat-x;
+}
+#container {
+	margin:auto;
+	width:842px;
+	text-align:left;
+	overflow:hidden;
+}
+#left {
+	float:left;
+	width:144px;
+	padding-right:12px;
+}
+#left #yin-yang {
+	float:left;
+	width:125px;
+	height:130px;
+}
+#left #yin-yang img {
+	padding-left:10px;
+}
+#left #red-shade-top {
+	float:left;
+	width:144px;
+	height:8px;
+	margin-top:10px;
+	background:url(../_images/structure/red-shade-left1.gif) no-repeat;
+}
+#left #red-background {
+	float:left;
+	width:144px;
+	background:url(../_images/structure/red-shade-left2.gif) repeat-y;
+	padding:0 0 11px 15px;
+}
+#left #red-background li {
+	padding-bottom:2px;
+}
+#left #red-background li.little-link {
+	padding-top:9px;
+}
+#left #red-background li.space-link  {
+	padding-top:15px;
+}
+#left #red-background input {
+	width:115px;
+	border:1px solid #a56b32;
+	padding:2px;
+}
+#left #red-background li.advanced-search {
+	margin-top:-2px;
+}
+#left #red-shade-bottom {
+	float:left;
+	width:144px;
+	height:8px;
+	margin-bottom:20px;
+	background:url(../_images/structure/red-shade-left3.gif) no-repeat;
+}
+#left #mars-pic-of-the-day {
+	text-align:center;
+	padding-bottom:15px;
+}
+#left #mars-pic-of-the-day img {
+	padding:5px 0 5px 0;
+}
+#left #mars-pic-of-the-day #pod-add {
+	padding-top:6px;
+}
+#top {
+	float:left;
+	width:680px;
+	height:77px;
+}
+#top #logo {
+	float:left;
+	width:155px;
+	height:45px;
+}
+#top #red-bar {
+	float:left;
+	width:525px;
+	height:45px;
+}
+#top #red-bar #login-logout {
+	text-align:right;
+}
+#top #red-bar #red-bar-links {
+	float:right;
+	padding-top:11px;
+}
+#top #red-bar #red-bar-links a {
+	padding-left:11px;
+}
+#top #under-red {
+	float:left;
+	width:680px;
+	height:32px;
+}
+#top #under-red #colonize-terraform-mars {
+	float:left;
+	width:237px;
+	height:32px;
+}
+#top #under-red #colonize-terraform-mars img {
+	padding-top:9px;
+	padding-left:8px;
+}
+#top #under-red #dashboard {
+	float:right;
+	width:424px;
+	height:28px;
+	background: url(../_images/structure/dashboard.gif) no-repeat;
+	padding-top:4px;
+	padding-left:15px;
+}
+#top #under-red #dashboard #username {
+	float:left;
+	height:28px;
+}
+#top #under-red #dashboard #username img {
+	position:relative;
+	top:2px;
+	left:3px;
+}
+#top #under-red #dashboard #dashboard-links {
+	float:right;
+	height:28px;
+	padding-right:5px;
+}
+#top #under-red #dashboard #dashboard-links a {
+	padding-left:10px;
+}
+#white-space {
+	float:left;
+	width:680px;
+	height:61px;
+	text-align:left;
+}
+#white-space #subpage-controls {
+	float:right;
+	height:20px;
+	text-align:center;
+	margin-top:13px;
+	padding:2px 5px 0 5px;
+	background:url(../_images/structure/subpage-controls.gif) repeat-x;	
+}
+#white-space #subpage-controls a {
+	padding:0 10px 0 10px;
+}
+#main {
+	float:left;
+	width:673px;
+	text-align:left;
+}
+#main .two-column {
+	float:left;
+	width:49%
+}
+#main .thread-post {
+	float:right;
+	width:98%;
+	margin:5px 0 5px 0;
+	border-left:1px solid #e9b27b;
+}
+#main .thread-post-bar .author {
+	padding-left:4px;
+}
+#main .thread-post-bar .time {
+	padding-left:10px;
+}
+#main .thread-post-bar a.reply {
+	padding-left:50px;
+	cursor:pointer;
+}
+#main .thread-post-bar {
+	float:left;
+	width:100%;
+	height:21px;
+	background:url(../_images/structure/thread-post-bar.gif) repeat-x;
+	border-right:1px solid #cc9966;
+}
+#main .thread-post-body {
+	float:left;
+	padding:4px;
+}
+#main .thread-reply {
+	float:left;
+	display:none;
+	margin:10px 0 5px 14px;
+}
+#main .thread-new {
+	float:left;
+	display:none;
+	width:662px;
+	margin-top:10px;
+}
+#main .thread-reply textarea, #main .thread-new textarea {
+	float:left;	
+	width:100%;
+	height:100px;
+	margin-bottom:3px;
+}
+#main .thread-reply input, #main .thread-new input {
+	float:right;
+	margin-left:5px;
+	padding:3px;
+}
+#main form {
+	margin:10px 0 15px 0;
+}
+#main input {
+	border:1px solid #a56b32;
+	height:19px;
+	padding:2px 2px 0 2px;
+}
+#main .submit input {
+	height:23px;
+	padding:2px;
+}
+#main p {
+	line-height:15px;
+	padding-top:10px;
+}
+#main table td {
+	padding:7px;
+	vertical-align:top;
+}
+#main .image {
+	float:right;
+	padding:7px 0 7px 7px;
+}
+#main .line {
+	float:left;
+	width:505px;
+	height:1px;
+	margin:12px 0 12px 84px;
+	border-top:1px solid #b36f2e;
+}
+#bottom {
+	width:100%;
+	height:106px;
+	padding-top:15px;
+	background: url(../_images/structure/red-shade-bottom.gif) repeat-x;
+}
+#bottom a {
+	padding:0 4px 0 4px;
+}

@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Advanced Example : DX Auth User Guide</title>
+
+<style type='text/css' media='all'>@import url('../userguide.css');</style>
+<link rel='stylesheet' type='text/css' media='all' href='../userguide.css' />
+
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+
+<meta http-equiv='expires' content='-1' />
+<meta http-equiv= 'pragma' content='no-cache' />
+<meta name='robots' content='all' />
+<meta name='author' content='Dexcell' />
+<meta name='description' content='DX Auth User Guide' />
+
+</head>
+<body>
+
+<!-- START NAVIGATION -->
+<div id="nav"><div id="nav_inner"><script type="text/javascript">create_menu('../');</script></div></div>
+<div id="nav2"><a name="top"></a><a href="javascript:void(0);" onclick="myHeight.toggle();"><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" title="Toggle Table of Contents" alt="Toggle Table of Contents" /></a></div>
+<div id="masthead">
+
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><h1>DX Auth User Guide Version 1.0</h1></td>
+<td id="breadcrumb_right"><a href="../toc.html">Table of Contents Page</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+
+
+<!-- START BREADCRUMB -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="http://dexcell.shinsengumiteam.com/dx_auth/">DX Auth Home</a> &nbsp;&#8250;&nbsp;
+<a href="../index.html">User Guide Home</a> &nbsp;&#8250;&nbsp;
+Advanced Example
+</td>
+<td id="searchbox"><form method="get" action="http://www.google.com/search"><input type="hidden" name="as_sitesearch" id="as_sitesearch" value="dexcell.shinsengumiteam.com/dx_auth/" />Search User Guide&nbsp; <input type="text" class="input" style="width:200px;" name="q" id="q" size="31" maxlength="255" value="" />&nbsp;<input type="submit" class="submit" name="sa" value="Go" /></form></td>
+</tr>
+</table>
+<!-- END BREADCRUMB -->
+
+<br clear="all" />
+
+
+<!-- START CONTENT -->
+<div id="content">
+
+
+<h1>Advanced example</h1>
+
+<p>This is more advanced, and how DX Auth should be implemented. You can see explanation commented in source code.</p>
+
+<pre name="code" class="php">
+class Auth extends Controller
+{
+	// Used for registering and changing password form validation
+	var $min_username = 4;
+	var $max_username = 20;
+	var $min_password = 4;
+	var $max_password = 20;
+
+	function Auth()
+	{
+		parent::Controller();
+		
+		$this->load->library('Form_validation');
+		$this->load->library('DX_Auth');		
+		
+		$this->load->helper('url');
+		$this->load->helper('form');
+	}
+	
+	function index()
+	{
+		$this->login();
+	}
+	
+	/* Callback function */
+	
+	function username_check($username)
+	{
+		$result = $this->dx_auth->is_username_available($username);
+		if ( ! $result)
+		{
+			$this->form_validation->set_message('username_check', 'Username already exist. Please choose another username.');
+		}
+				
+		return $result;
+	}
+
+	function email_check($email)
+	{
+		$result = $this->dx_auth->is_email_available($email);
+		if ( ! $result)
+		{
+			$this->form_validation->set_message('email_check', 'Email is already used by another user. Please choose another email address.');
+		}
+				
+		return $result;
+	}
+
+	function captcha_check($code)
+	{
+		$result = TRUE;
+		
+		if ($this->dx_auth->is_captcha_expired())
+		{
+			// Will replace this error msg with $lang
+			$this->form_validation->set_message('captcha_check', 'Your confirmation code has expired. Please try again.');			
+			$result = FALSE;
+		}
+		elseif ( ! $this->dx_auth->is_captcha_match($code))
+		{
+			$this->form_validation->set_message('captcha_check', 'Your confirmation code does not match the one in the image. Try again.');			
+			$result = FALSE;
+		}
+
+		return $result;
+	}
+		
+	/* End of Callback function */
+	
+	function login()
+	{
+		if ( ! $this->dx_auth->is_logged_in())
+		{
+			$val = $this->form_validation;
+			
+			// Set form validation rules
+			$val->set_rules('username', 'Username', 'trim|required|xss_clean');
+			$val->set_rules('password', 'Password', 'trim|required|xss_clean');
+			$val->set_rules('remember', 'Remember me', 'integer');
+
+			// Set captcha rules if login attempts exceed max attempts in config
+			if ($this->dx_auth->is_max_login_attempts_exceeded())
+			{
+				$val->set_rules('captcha', 'Confirmation Code', 'trim|required|xss_clean|callback_captcha_check');
+			}
+				
+			if ($val->run() AND $this->dx_auth->login($val->set_value('username'), $val->set_value('password'), $val->set_value('remember')))
+			{
+				// Redirect to homepage
+				redirect('', 'location');
+			}
+			else
+			{
+				// Check if the user is failed logged in because user is banned user or not
+				if ($this->dx_auth->is_banned())
+				{
+					// Redirect to banned uri
+					$this->dx_auth->deny_access('banned');
+				}
+				else
+				{						
+					// Default is we don't show captcha until max login attempts eceeded
+					$data['show_captcha'] = FALSE;
+				
+					// Show captcha if login attempts exceed max attempts in config
+					if ($this->dx_auth->is_max_login_attempts_exceeded())
+					{
+						// Create catpcha						
+						$this->dx_auth->captcha();
+						
+						// Set view data to show captcha on view file
+						$data['show_captcha'] = TRUE;
+					}
+					
+					// Load login page view
+					$this->load->view($this->dx_auth->login_view, $data);
+				}
+			}
+		}
+		else
+		{
+			$data['auth_message'] = 'You are already logged in.';
+			$this->load->view($this->dx_auth->logged_in_view, $data);
+		}
+	}
+	
+	function logout()
+	{
+		$this->dx_auth->logout();
+		
+		$data['auth_message'] = 'You have been logged out.';		
+		$this->load->view($this->dx_auth->logout_view, $data);
+	}
+	
+	function register()
+	{		
+		if ( ! $this->dx_auth->is_logged_in() AND $this->dx_auth->allow_registration)
+		{	
+			$val = $this->form_validation;
+			
+			// Set form validation rules			
+			$val->set_rules('username', 'Username', 'trim|required|xss_clean|min_length['.$this->min_username.']|max_length['.$this->max_username.']|callback_username_check|alpha_dash');
+			$val->set_rules('password', 'Password', 'trim|required|xss_clean|min_length['.$this->min_password.']|max_length['.$this->max_password.']|matches[confirm_password]');
+			$val->set_rules('confirm_password', 'Confirm Password', 'trim|required|xss_clean');
+			$val->set_rules('email', 'Email', 'trim|required|xss_clean|valid_email|callback_email_check');
+			
+			if ($this->dx_auth->captcha_registration)
+			{
+				$val->set_rules('captcha', 'Confirmation Code', 'trim|xss_clean|required|callback_captcha_check');
+			}
+
+			// Run form validation and register user if it's pass the validation
+			if ($val->run() AND $this->dx_auth->register($val->set_value('username'), $val->set_value('password'), $val->set_value('email')))
+			{	
+				// Set success message accordingly
+				if ($this->dx_auth->email_activation)
+				{
+					$data['auth_message'] = 'You have successfully registered. Check your email address to activate your account.';
+				}
+				else
+				{					
+					$data['auth_message'] = 'You have successfully registered. '.anchor(site_url($this->dx_auth->login_uri), 'Login');
+				}
+				
+				// Load registration success page
+				$this->load->view($this->dx_auth->register_success_view, $data);
+			}
+			else
+			{
+				// Is registration using captcha
+				if ($this->dx_auth->captcha_registration)
+				{
+					$this->dx_auth->captcha();										
+				}
+
+				// Load registration page
+				$this->load->view($this->dx_auth->register_view);
+			}
+		}
+		elseif ( ! $this->dx_auth->allow_registration)
+		{
+			$data['auth_message'] = 'Registration has been disabled.';
+			$this->load->view($this->dx_auth->register_disabled_view, $data);
+		}
+		else
+		{
+			$data['auth_message'] = 'You have to logout first, before registering.';
+			$this->load->view($this->dx_auth->logged_in_view, $data);
+		}
+	}
+		
+	function activate()
+	{
+		// Get username and key
+		$username = $this->uri->segment(3);
+		$key = $this->uri->segment(4);
+
+		// Activate user
+		if ($this->dx_auth->activate($username, $key)) 
+		{
+			$data['auth_message'] = 'Your account have been successfully activated. '.anchor(site_url($this->dx_auth->login_uri), 'Login');
+			$this->load->view($this->dx_auth->activate_success_view, $data);
+		}
+		else
+		{
+			$data['auth_message'] = 'The activation code you entered was incorrect. Please check your email again.';
+			$this->load->view($this->dx_auth->activate_failed_view, $data);
+		}
+	}
+	
+	function forgot_password()
+	{
+		$val = $this->form_validation;
+		
+		// Set form validation rules
+		$val->set_rules('login', 'Username or Email address', 'trim|required|xss_clean');
+
+		// Validate rules and call forgot password function
+		if ($val->run() AND $this->dx_auth->forgot_password($val->set_value('login')))
+		{
+			$data['auth_message'] = 'An email has been sent to your email with instructions with how to activate your new password.';
+			$this->load->view($this->dx_auth->forgot_password_success_view, $data);
+		}
+		else
+		{
+			$this->load->view($this->dx_auth->forgot_password_view);
+		}
+	}
+	
+	function reset_password()
+	{
+		// Get username and key
+		$username = $this->uri->segment(3);
+		$key = $this->uri->segment(4);
+
+		// Reset password
+		if ($this->dx_auth->reset_password($username, $key))
+		{
+			$data['auth_message'] = 'You have successfully reset you password, '.anchor(site_url($this->dx_auth->login_uri), 'Login');
+			$this->load->view($this->dx_auth->reset_password_success_view, $data);
+		}
+		else
+		{
+			$data['auth_message'] = 'Reset failed. Your username and key are incorrect. Please check your email again and follow the instructions.';
+			$this->load->view($this->dx_auth->reset_password_failed_view, $data);
+		}
+	}
+	
+	function change_password()
+	{
+		// Check if user logged in or not
+		if ($this->dx_auth->is_logged_in())
+		{			
+			$val = $this->form_validation;
+			
+			// Set form validation
+			$val->set_rules('old_password', 'Old Password', 'trim|required|xss_clean|min_length['.$this->min_password.']|max_length['.$this->max_password.']');
+			$val->set_rules('new_password', 'New Password', 'trim|required|xss_clean|min_length['.$this->min_password.']|max_length['.$this->max_password.']|matches[confirm_new_password]');
+			$val->set_rules('confirm_new_password', 'Confirm new Password', 'trim|required|xss_clean');
+			
+			// Validate rules and change password
+			if ($val->run() AND $this->dx_auth->change_password($val->set_value('old_password'), $val->set_value('new_password')))
+			{
+				$data['auth_message'] = 'Your password has successfully been changed.';
+				$this->load->view($this->dx_auth->change_password_success_view, $data);
+			}
+			else
+			{
+				$this->load->view($this->dx_auth->change_password_view);
+			}
+		}
+		else
+		{
+			// Redirect to login page
+			$this->dx_auth->deny_access('login');
+		}
+	}	
+	
+	function cancel_account()
+	{
+		// Check if user logged in or not
+		if ($this->dx_auth->is_logged_in())
+		{			
+			$val = $this->form_validation;
+			
+			// Set form validation rules
+			$val->set_rules('password', 'Password', "trim|required|xss_clean");
+			
+			// Validate rules and change password
+			if ($val->run() AND $this->dx_auth->cancel_account($val->set_value('password')))
+			{
+				// Redirect to homepage
+				redirect('', 'location');
+			}
+			else
+			{
+				$this->load->view($this->dx_auth->cancel_account_view);
+			}
+		}
+		else
+		{
+			// Redirect to login page
+			$this->dx_auth->deny_access('login');
+		}
+	}	
+}
+</pre>
+<p>
+You can find this example in <strong>controllers/auth.php</strong> that included in DX Auth library download.
+</p>
+
+</div>
+<!-- END CONTENT -->
+
+<div id="footer">
+<p><a href="#top">Top of Page</a></p>
+<p><a href="http://dexcell.shinsengumiteam.com/dx_auth/">DX Auth</a> &nbsp;&middot;&nbsp; Copyright &#169; 2008 &nbsp;&middot;&nbsp; <a href="http://dexcell.shinsengumiteam.com/">Dexcell</a></p>
+</div>
+
+<link type="text/css" rel="stylesheet" href="../SyntaxHighlighter.css"></link>
+<script language="javascript" src="../nav/shCore.js"></script>
+<script language="javascript" src="../nav/shBrushPhp.js"></script>
+<script language="javascript">
+dp.SyntaxHighlighter.ClipboardSwf = '../nav/clipboard.swf';
+dp.SyntaxHighlighter.HighlightAll('code');
+</script>
+</body>
+</html>

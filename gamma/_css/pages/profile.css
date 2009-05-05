@@ -1,0 +1,127 @@
+.profile-stance {
+	float:left;
+	width:100%;
+	padding-top:10px;
+}
+.profile-stance .profile-stance-label {
+	float:left;
+	width:145px;
+	padding-top:2px;
+	color:#999;
+}
+.profile-stance #colonization-stance-bar {
+	float:left;
+	width:160px;
+	height:35px;
+	background:url('../../_images/structure/profile-colonization-stance.gif') no-repeat;
+	font-size:10px;
+	color:#aaa;
+}
+.profile-stance #terraforming-stance-bar {
+	float:left;
+	width:160px;
+	height:35px;
+	background:url('../../_images/structure/profile-terraforming-stance.gif') no-repeat;
+	font-size:10px;
+	color:#aaa;
+}
+.profile-stance #political-stance-bar {
+	float:left;
+	width:160px;
+	height:35px;
+	background:url('../../_images/structure/profile-political-stance.gif') no-repeat;
+	font-size:10px;
+	color:#aaa;
+}
+.profile-stance .profile-stance-indicator {
+	float:left;
+	width:0px;
+	height:17px;
+	position:relative;
+	border:1px solid #6d6d6d;
+}
+.profile-stance .profile-stance-left {
+	float:left;
+	padding:18px 0 0 5px;
+}
+.profile-stance .profile-stance-right {
+	float:right;
+	padding-top:18px;
+}
+#profile-groups {
+	float:left;
+	padding-top:20px;
+	color:#999;
+}
+#profile-groups ul {
+	padding-top:12px;
+}
+#profile-groups li {
+	padding-top:4px;
+}
+#profile-groups li a {
+	color:#666;
+}
+#profile-titles {
+	float:left;
+	width:165px;
+	padding-top:5px;
+	text-align:right;
+}
+#profile-titles li {
+	padding-top:2px;
+	color:#ab7b26;
+}
+#profile-titles li.special-title {
+	color:#ab3f26;
+}
+#profile-stats {
+	float:left;
+	width:165px;
+	padding-top:5px;
+	text-align:right;
+	font-size:10px;
+}
+#profile-stats li {
+	padding-top:6px;
+	color:#999;
+}
+#profile-stats li .stat {
+	font-size:11px;
+	color:#666;
+}
+.most-recent {
+	float:left;
+	width:100%;
+	padding-top:26px;
+	color:#999;
+}
+.most-recent a {
+	padding-left:15px;
+	font-size:11px;
+}
+.most-recent li {
+	padding:8px 0 2px 0;
+}
+.most-recent li a {
+	font-size:12px;
+	color:#666;
+}
+.most-recent li .most-recent-date {
+	padding-left:14px;
+	font-size:10px;
+}
+.profile-question {
+	float:left;
+	width:100%;
+	padding-top:26px;
+	color:#999;
+}
+.profile-question p {
+	font-size:11px;
+	color:#666;
+}
+h3.location {
+	font-size:11px;
+	color:#999;
+}

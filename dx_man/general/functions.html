@@ -1,0 +1,492 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Functions : DX Auth User Guide</title>
+
+<style type='text/css' media='all'>@import url('../userguide.css');</style>
+<link rel='stylesheet' type='text/css' media='all' href='../userguide.css' />
+
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+
+<meta http-equiv='expires' content='-1' />
+<meta http-equiv= 'pragma' content='no-cache' />
+<meta name='robots' content='all' />
+<meta name='author' content='Dexcell' />
+<meta name='description' content='DX Auth User Guide' />
+
+</head>
+<body>
+
+<!-- START NAVIGATION -->
+<div id="nav"><div id="nav_inner"><script type="text/javascript">create_menu('../');</script></div></div>
+<div id="nav2"><a name="top"></a><a href="javascript:void(0);" onclick="myHeight.toggle();"><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" title="Toggle Table of Contents" alt="Toggle Table of Contents" /></a></div>
+<div id="masthead">
+
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><h1>DX Auth User Guide Version 1.0</h1></td>
+<td id="breadcrumb_right"><a href="../toc.html">Table of Contents Page</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+
+
+<!-- START BREADCRUMB -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="http://dexcell.shinsengumiteam.com/dx_auth/">DX Auth Home</a> &nbsp;&#8250;&nbsp;
+
+<a href="../index.html">User Guide Home</a> &nbsp;&#8250;&nbsp;
+Functions
+</td>
+<td id="searchbox"><form method="get" action="http://www.google.com/search"><input type="hidden" name="as_sitesearch" id="as_sitesearch" value="dexcell.shinsengumiteam.com/dx_auth/" />Search User Guide&nbsp; <input type="text" class="input" style="width:200px;" name="q" id="q" size="31" maxlength="255" value="" />&nbsp;<input type="submit" class="submit" name="sa" value="Go" /></form></td>
+</tr>
+</table>
+<!-- END BREADCRUMB -->
+
+<br clear="all" />
+
+
+<!-- START CONTENT -->
+<div id="content">
+
+
+<h1>Main functions</h1>
+
+<p>This is the function list you can use in DX Auth library.</p>
+
+<h2>login(<var>$login</var>, <var>$password</var>, <var>$remember = TRUE</var>)</h2>
+
+<p>Login user. If login succeed, returning TRUE, else FALSE.</p>
+<p>
+<var>$login</var> is username or email address or both depend on setting in <a href="config.html">dx_auth config</a> file.<br/>
+<var>$password</var> is user password.<br/>
+<var>$remember</var> is remember user next time they open the website (remember me feature).
+</p>
+<p class="important">If function returning FALSE you can use <dfn>get_auth_error()</dfn> function to return error string.</p>
+
+<h2>logout()</h2>
+
+<p>Logout user.</p>
+
+<h2>register(<var>$username</var>, <var>$password</var>,<var>$email</var>)</h2>
+
+<p>Register new user. If register succeed, return <strong>new user record</strong>, else return FALSE.</p>
+<p>
+If <dfn>DX_email_activation</dfn> value in <a href="config.html">dx_auth config</a> file is TRUE then it will email activation, and requires user to activate the account.<br/>
+If <dfn>DX_email_activation</dfn> is FALSE and <dfn>DX_email_account_details</dfn> value in <a href="config.html">dx_auth config</a> file is TRUE then it will email user account details.
+</p>
+
+<p class="important">
+This function will automatically set new registered user <strong>role_id</strong> to 1, so you need to make sure record in roles table which have id = 1, it's name field is 'normal user' or something similar.
+</p>
+
+<h2>forgot_password(<var>$login</var>)</h2>
+
+<p>Sending an email with a key to reset their password. If succeed return TRUE else return FALSE.</p>
+<p><var>$login</var> is username or email.</p>
+<p class="important">
+Since password is encrypted in one way in one way, it's not possible to retreive back password. That's why we need to reset it.<br/><br/>
+If function returning FALSE you can use <dfn>get_auth_error()</dfn> function to return error string.</p>
+
+<h2>reset_password(<var>$username</var>, <var>$key = ''</var>)</h2>
+
+<p>
+Reset password based on username and key. Usually combined with <dfn>forgot_password()</dfn> function. If succeed return TRUE else return FALSE. 
+</p>
+
+<h2>activate(<var>$username</var>, <var>$key = ''</var>)</h2>
+
+<p>Activate user based on username and key. It's used to activate user account after registration if <dfn>DX_email_verification</dfn> is set to TRUE in <a href="config.html">dx_auth config</a> file.</p>
+
+<h2>change_password(<var>$old_pass</var>, <var>$new_pass</var>)</h2>
+
+<p>Change password of current logged in user. Make sure you check if user already logged in before calling this function.
+If succeed return TRUE else return FALSE. </p>
+<p class="important">If function returning FALSE you can use <dfn>get_auth_error()</dfn> function to return error string.</p>
+
+<h2>cancel_account(<var>$password</var>)</h2>
+
+<p>Delete current logged in user from database. Make sure you check if user already logged in before calling this function.
+If succeed return TRUE else return FALSE. </p>
+
+<p class="important">If function returning FALSE you can use <dfn>get_auth_error()</dfn> function to return error string.</p>
+
+<h2>get_user_id()</h2>
+
+<p>Return user id, only if user already logged in.</p>
+
+<h2>get_username()</h2>
+
+<p>Return username, only if user already logged in.</p>
+
+<h2>get_role_id()</h2>
+
+<p>Return user role id, only if user already logged in.</p>
+
+<h2>get_role_name()</h2>
+
+<p>Return user role name, only if user already logged in.</p>
+
+<h2>is_admin()</h2>
+
+<p>Check if user is admin, only if user already logged in.</p>
+
+<p class="important">
+If user role id is the same value with role_id field which have <strong>'admin'</strong> string (case insensitive) in name field in roles table,
+function will return TRUE.
+</p>
+
+<h2>is_role(<var>$roles = array()</var>, <var>$use_role_name = TRUE</var>)</h2>
+
+<p>Check if user has <var>$roles</var> privilege.<br/>
+If <var>$use_role_name</var> = TRUE then <var>$roles</var> is role name such as 'admin', 'editor', 'etc', 
+else <var>$roles</var> is role_id such as 0, 1, 2.</p>
+<p>You can pass an array or a string in <var>$roles</var> parameter.</p>
+<p>For example:</p>
+<pre name="code" class="php">
+if ($this->dx_auth->is_role('admin'))
+{
+	// Do something
+}
+
+if ($this->dx_auth->is_role(array('admin', 'moderator'))
+{
+	// Do something
+}
+
+// Using an Role ID as $roles parameter
+if ($this->dx_auth->is_role('1', FALSE))
+{
+	// Do something
+}
+
+if ($this->dx_auth->is_role(array('1', '2'), FALSE))
+{
+	// Do something
+}
+</pre>
+
+<h2>is_logged_in()</h2>
+
+<p>Check if user already logged in.</p>
+
+<h2>is_banned()</h2>
+
+<p>Check if user is a banned user.</p>
+
+<p class="important">
+You should only call this function after you call <dfn>login()</dfn> function.
+So if login() function returning FALSE, you can check if user is banned or not using this function.
+</p>
+
+<h2>get_ban_reason()</h2>
+
+<p>Get ban reason of a banned user.</p>
+
+<p class="important">
+You should only call this function after you call <dfn>login()</dfn> function.
+So if login() function returning FALSE, and if user is banned, you can user this function to get the reason.
+</p>
+
+<h2>is_username_available(<var>$username</var>)</h2>
+
+<p>Check if username is available to use, by making sure there is no same username in the database. 
+Typical usage of this function is in form validation callback function.</p>
+
+<h2>is_email_available(<var>$email</var>)</h2>
+
+<p>Check if email is available to use, by making sure there is no same email in the database. 
+Typical usage of this function is in form validation callback function.</p>
+
+<h2>get_auth_error()</h2>
+
+<p>Get an error message when <dfn>login()</dfn>, <dfn>forgot_password()</dfn>, <dfn>change_password()</dfn>, <dfn>cancel_account()</dfn> function is returning <kbd>FALSE</kbd>.</p>
+
+<h2>is_max_login_attempts_exceeded()</h2>
+
+<p>Check if login attempts is more than max login attempts specified in <a href="config.html">dx_auth config</a> file.</p>
+<p class="important">Login attempt increase count based on login attempted by IP address.</p>
+
+<h2>check_uri_permissions()</h2>
+<p>This will check if current logged in user is allowed to access current URI, based on his role, or his parent role.</p>
+
+<p>Here is the detail what happen when you call this function: </p>
+<p>First, function will check if user is logged in or not, if user haven't login then it will redirect to login URI.</p>
+<p>But if user is logged in, then it will check if user is admin.</p>
+<p>If user is admin, then it is allowed to access the URI.</p>
+<p>But if user is not admin, it will check if user role and parent role is allowed to accesss current URI based on URI rule in <dfn>permissions</dfn> table in database.</p>
+<p>If user is not allowed, it will redirect to deny access URI.</p>
+
+<p>You can call <strong>check_uri_permissions()</strong> in the controller constructor to protect the whole controller.</p>
+
+<pre name="code" class="php">
+class Home extends Controller 
+{
+	function Home()
+	{
+		parent::Controller();
+
+		$this->dx_auth->check_uri_permissions();
+	}
+}
+</pre>
+
+Or use it within a function<br/>
+
+<pre name="code" class="php">
+function hello_world()
+{
+	$this->dx_auth->check_uri_permissions();
+	
+	// Do something
+}
+</pre>
+
+<h3>Case example:</h3>
+
+<p>
+There is a user with role_id = 1 (normal user).<br/>
+And then in <dfn>permissions</dfn> table, there is a record specify role_id = 1 have permission URI to access '/test/' URI.<br/>
+Now this user want to access uri '/test/hi/'. </p>
+<p>If you have code like this in Test controller :</p>
+<pre name="code" class="php">
+class Test extends Controller 
+{
+	function Test()
+	{
+		parent::Controller();
+		
+		// Secure controller
+		$this->dx_auth->check_uri_permissions();
+	}
+	
+	function hi()
+	{
+		echo 'Hi';
+	}
+	
+	function hello()
+	{
+		echo 'Hello';
+	}
+}
+</pre>
+<p>This user will pass the check and access '/test/hi/' URI, and echo 'Hi'.<br/>
+Because if permission URI set to '/test/', it means grant access to class Test and all it's function.</p>
+
+<p>If you want to limit role access to function only, you can specify <kbd>'/class/function/'</kbd> when setting permission URI.</p>
+<p>For example, in previous case example if you change role_id = 1 URI permission to '/test/hi/', <br/>
+user will able to access 'test/hi/' URI, but cannot access 'test/hello/' URI.</p>
+
+<p>You also can set URI permission to '/' to enable role access all URI.</p>
+
+<p class="important">To set URI permission, you have to use function given in permissions model, or make your own.
+	See the <a href="../examples/permission.html">example</a> on how to set the permission.
+</p>
+<p class="important">	
+	For CL Auth user, notice that URI permission now renamed to <kbd>'/class/function/'</kbd> instead of <kbd>'/class/function'</kbd>.
+</p>
+
+<h3>Inheritance</h3>
+<p>If user role have parent role, then user also have access to parent role, and so on.
+To describe this, let's have this URI Permission illustration.</p>
+<pre>
+User 
+{
+	'/home/'
+	'/help/'
+}
+
+Moderator: User
+{
+	'/moderator/'
+}
+
+Super_Moderator: Moderator
+{
+	'/super/'
+}
+
+Big_Moderator: Moderator
+{
+	'/big/'
+}
+</pre>
+
+<p>
+	This means, <strong>Super_Moderator</strong> role can access <strong>Moderator</strong> and <strong>User</strong> URI, but cannot access <strong>Big_Moderator</strong> URI.
+</p>
+<p class="important">To use this feature, you need to specify parent for each role in parent_id field in roles table.</p>
+<p>In previous case, here is the illustration of the roles table</p>
+<pre>
+id  parent_id  name
+-------------------------
+1    0    User
+2    0    Admin
+3    1    Moderator
+4    3    Super Moderator 
+5    3    Big Moderator 
+</pre>
+
+<p class="important">
+<strong>Note</strong>
+Using this function is optional, you might don't want to use it if you pretty comfortable checking the user manually 
+using function like <dfn>is_admin()</dfn>, <dfn>is_role()</dfn>, <dfn>is_logged_in()</dfn>, etc.
+</p>
+	
+
+<h2>get_permission_value(<var>$key</var>, <var>$check_parent = TRUE</var>)</h2>
+
+<p>Get permission value from specified key. Call this function only when user is logged in already.</p>
+<p>
+<var>$key</var> is permission array key (Note: permissions is saved as array in table).<br/>
+If <var>$check_parent</var> is TRUE means if permission value not found in user role, it will try to get permission value from parent role.
+</p>
+
+<p>Returning value if permission found, otherwise returning NULL.</p>
+
+<p class="important">To set permission, you have to use function given in permissions model, or make your own.
+	See the <a href="../examples/permission.html">example</a> on how to set the permission.
+</p>
+<p class="important">
+<strong>Note</strong>
+Using this function is optional, you might don't want to use it if you pretty comfortable checking the user manually, and give permission manually
+using function like <dfn>is_admin()</dfn>, <dfn>is_role()</dfn>, etc.
+</p>
+	
+
+<h2>get_permissions_value(<var>$key</var>, <var>$array_key = 'default'</var>)</h2>
+<p>Get permissions value from specified key. Call this function only when user is logged in already.</p>
+<p>This function will search key in user permission, and it's parents permissions.</p>
+		
+<var>$key</var> is permission array key (Note: permissions is saved as array in table).<br/>
+<p>
+<var>$array_key = 'default'</var>. Retrurning array ordered using 0, 1, 2 as array key.<br/>
+<var>$array_key = 'role_id'</var>. Retrurning array ordered using role_id as array key.<br/>
+<var>$array_key = 'role_name</var>'. Retrurning array ordered using role_name as array key.<br/>
+</p>
+<p>Returning array of value if permission found, otherwise returning NULL.</p>
+
+<p class="important">To set permission, you have to use function given in permissions model, or make your own.
+	See the <a href="../examples/permission.html">example</a> on how to set the permission.
+</p>
+<p class="important">
+<strong>Note</strong>
+Using this function is optional, you might don't want to use it if you pretty comfortable checking the user manually, and give permission manually
+using function like <dfn>is_admin()</dfn>, <dfn>is_role()</dfn>, etc.
+</p>
+
+
+<h2>deny_access(<var>$uri = 'deny'</var>)</h2>
+
+<p>Calling this function will redirect user depending on <var>$uri</var> variable. Default <var>$uri</var> is 'deny'</p>
+<p>
+<var>$uri</var> = 'deny' will redirect user to 'DX_deny_uri' specified in <a href="config.html">dx_auth config</a> file.<br/>
+<var>$uri</var> = 'login' will redirect user to 'DX_login_uri' specified in <a href="config.html">dx_auth config</a> file.<br/>
+<var>$uri</var> = 'banned' will redirect user to 'DX_banned_uri' specified in <a href="config.html">dx_auth config</a> file.
+</p>
+
+
+<h2>catpcha()</h2>
+
+<p>Creating a captcha to be used in form validation.</p>
+
+<h2>get_catpcha_image()</h2>
+
+<p>Get HTML image of created catpcha. Use this function in view file.</p>
+
+<h2>is_captcha_expired()</h2>
+
+<p>Check if created captcha already expired or not. Use this in callback form validation function.</p>
+
+<h2>is_captcha_match(<var>$code</var>)</h2>
+
+<p>Check if created catpcha text match with the <var>$code</var>. Use this in callback form validation function.</p>
+
+<br/><br/>
+<h1>reCAPTCHA functions</h1>
+<p>
+Below is reCAPTCHA function list.
+Because of name limitation in reCAPTCHA API (everything should have fixed name), 
+reCAPTCHA function is separated from native DX Auth captcha.
+</p>
+<p>
+To use reCAPTCHA function you have to set <dfn>DX_recaptcha_public_key</dfn> and <dfn>DX_recaptcha_private_key</dfn> in <a href="config.html">dx_auth config</a> file.
+To get the key you can register at <a href="http://recaptcha.net">reCAPTCHA website</a>.
+</p>
+
+<p>You can find an example to use reCAPTCHA in registration <a href="../examples/recaptcha.html">here</a>.</p>
+
+
+<h2>get_recaptcha_reload_link(<var>$text = 'Get another CAPTCHA'</var>)</h2>
+
+<p>Get reCAPTCHA reload captcha link, with <var>$text</var> as anchor text. Use this function in view file.</p>
+
+<h2>get_recaptcha_switch_image_audio_link(<var>$switch_image_text = 'Get an image CAPTCHA', $switch_audio_text = 'Get an audio CAPTCHA'</var>)</h2>
+
+<p>Get reCAPTCHA switch image or audio link. Use this function in view file.</p>
+
+<h2>get_recaptcha_label(<var>$image_text = 'Enter the words above', $audio_text = 'Enter the numbers you hear'</var>)</h2>
+
+<p>Get reCAPTCHA label telling user to input captcha in the inputbox. Use this function in view file.</p>
+
+<h2>get_recaptcha_input()</h2>
+
+<p>Get reCAPTCHA input box to input captcha. Use this function in view file.</p>
+
+<p class="important">
+You should use this function, otherwise reCAPTCHA image won't show up
+because reCAPTCHA javascript will try to find this input box.
+</p>
+
+<h2>get_recaptcha_image()</h2>
+
+<p>Get reCATPCHA image. Use this function in view file.</p>
+
+<h2>get_recaptcha_html()</h2>
+
+<p>Get reCAPTCHA javascript and non javasript html. Use this function in view file.</p>
+
+<p class="important">
+	This is the main part of reCAPTCHA function.<br/>
+	Call this function <strong>after</strong> you are using some or all <strong>get_recaptcha_xxx</strong> function above. 
+	Meaning this function should be called the last.
+</p>
+
+<h2>is_recaptcha_match()</h2>
+
+<p>Check if created reCAPTCHA text match with the text that user inputed in <dfn>get_recaptcha_input()</dfn> function. Use this in callback form validation function.</p>
+
+<h2>check_role_uri()</h2>
+<p class="important">
+	<kbd>This function is obsolete in version 1.0.2 above. Use check_uri_permissions() to have same effect with new permission table.</kbd>
+</p>
+</div>
+
+
+<!-- END CONTENT -->
+
+
+<div id="footer">
+<p><a href="#top">Top of Page</a></p>
+<p><a href="http://dexcell.shinsengumiteam.com/dx_auth/">DX Auth</a> &nbsp;&middot;&nbsp; Copyright &#169; 2008 &nbsp;&middot;&nbsp; <a href="http://dexcell.shinsengumiteam.com/">Dexcell</a></p>
+</div>
+
+<link type="text/css" rel="stylesheet" href="../SyntaxHighlighter.css"></link>
+<script language="javascript" src="../nav/shCore.js"></script>
+<script language="javascript" src="../nav/shBrushPhp.js"></script>
+<script language="javascript">
+dp.SyntaxHighlighter.ClipboardSwf = '../nav/clipboard.swf';
+dp.SyntaxHighlighter.HighlightAll('code');
+</script>
+</body>
+</html>
