@@ -1,13 +1,5 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
-/**
- * User authorization library. Handles user login and logout, as well as secure
- * password hashing.
- *
- * @package    Auth
- * @author     Kohana Team
- * @copyright  (c) 2007 Kohana Team
- * @license    http://kohanaphp.com/license.html
- */
+
 class Auth_Core {
 
 	// Session instance
@@ -31,14 +23,15 @@ class Auth_Core {
 	 *
 	 * @return  object
 	 */
-	public static function instance($config = array())
+	public static function instance($config = array(), $driver_string = NULL)
 	{
-		static $instance;
+		static $instance = array();
 
-		// Load the Auth instance
-		empty($instance) and $instance = new Auth($config);
+		if(!array_key_exists($driver_string, $instance)){
+			$instance[$driver_string] = new Auth($config, $driver_string);
+		}
 
-		return $instance;
+		return $instance[$driver_string];
 	}
 
 	/**
@@ -46,10 +39,13 @@ class Auth_Core {
 	 *
 	 * @return  void
 	 */
-	public function __construct($config = array(), $driver_string = $config['driver'])
-	{
+	public function __construct($config = array(), $driver_string = NULL){
+
 		// Append default auth configuration
 		$config += Kohana::config('auth');
+
+		if(is_null($driver_string)) $driver_string = $config['driver'];
+
 
 		// Clean up the salt pattern and split it into an array
 		$config['salt_pattern'] = preg_split('/,\s*/', Kohana::config('auth.salt_pattern'));
@@ -100,28 +96,25 @@ class Auth_Core {
 	/**
 	 * Attempt to log in a user by using an ORM object and plain-text password.
 	 *
-	 * @param   string   username to log in
+	 * @param   string   user_name to log in
 	 * @param   string   password to check against
 	 * @param   boolean  enable auto-login
 	 * @return  boolean
 	 */
-	public function login($username, $password, $remember = FALSE)
-	{
-		if (empty($password))
-			return FALSE;
-
-		if (is_string($password))
-		{
-			// Get the salt from the stored password
-			$salt = $this->find_salt($this->driver->password($username));
-
-			// Create a hashed password using the salt from the stored password
-			$password = $this->hash_password($password, $salt);
-		}
-
-		return $this->driver->login($username, $password, $remember);
+	public function login($credentials, $remember = FALSE){
+		return $this->driver->login($credentials, $remember);
 	}
 
+	/**
+	 * Registers a user
+	 * 
+	 * @param string user_name
+	 * @param stirng email
+	 * @param array  credentials (password, password_confirm)
+	 */
+	public function register($user_name, $email, $creds, $save = TRUE){
+		return $this->driver->register($user_name, $email, $creds, $save = TRUE);
+	}
 	/**
 	 * Attempt to automatically log a user in.
 	 *
@@ -133,14 +126,14 @@ class Auth_Core {
 	}
 
 	/**
-	 * Force a login for a specific username.
+	 * Force a login for a specific user_name.
 	 *
-	 * @param   mixed    username
+	 * @param   mixed    user_name
 	 * @return  boolean
 	 */
-	public function force_login($username)
+	public function force_login($user_name)
 	{
-		return $this->driver->force_login($username);
+		return $this->driver->force_login($user_name);
 	}
 
 	/**
@@ -152,82 +145,6 @@ class Auth_Core {
 	public function logout($destroy = FALSE)
 	{
 		return $this->driver->logout($destroy);
-	}
-
-	/**
-	 * Creates a hashed password from a plaintext password, inserting salt
-	 * based on the configured salt pattern.
-	 *
-	 * @param   string  plaintext password
-	 * @return  string  hashed password string
-	 */
-	public function hash_password($password, $salt = FALSE)
-	{
-		if ($salt === FALSE)
-		{
-			// Create a salt seed, same length as the number of offsets in the pattern
-			$salt = substr($this->hash(uniqid(NULL, TRUE)), 0, count($this->config['salt_pattern']));
-		}
-
-		// Password hash that the salt will be inserted into
-		$hash = $this->hash($salt.$password);
-
-		// Change salt to an array
-		$salt = str_split($salt, 1);
-
-		// Returned password
-		$password = '';
-
-		// Used to calculate the length of splits
-		$last_offset = 0;
-
-		foreach ($this->config['salt_pattern'] as $offset)
-		{
-			// Split a new part of the hash off
-			$part = substr($hash, 0, $offset - $last_offset);
-
-			// Cut the current part out of the hash
-			$hash = substr($hash, $offset - $last_offset);
-
-			// Add the part to the password, appending the salt character
-			$password .= $part.array_shift($salt);
-
-			// Set the last offset to the current offset
-			$last_offset = $offset;
-		}
-
-		// Return the password, with the remaining hash appended
-		return $password.$hash;
-	}
-
-	/**
-	 * Perform a hash, using the configured method.
-	 *
-	 * @param   string  string to hash
-	 * @return  string
-	 */
-	public function hash($str)
-	{
-		return hash($this->config['hash_method'], $str);
-	}
-
-	/**
-	 * Finds the salt from a password, based on the configured salt pattern.
-	 *
-	 * @param   string  hashed password
-	 * @return  string
-	 */
-	public function find_salt($password)
-	{
-		$salt = '';
-
-		foreach ($this->config['salt_pattern'] as $i => $offset)
-		{
-			// Find salt characters, take a good long look...
-			$salt .= $password[$offset + $i];
-		}
-
-		return $salt;
 	}
 
 } // End Auth

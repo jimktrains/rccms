@@ -143,7 +143,7 @@ class Database_Core {
 
 			if (strpos($connection, '@') !== FALSE)
 			{
-				// Get the username and password
+				// Get the user_name and password
 				list ($db['pass'], $connection) = explode('@', $connection, 2);
 				// Check if a password is supplied
 				$logindata = explode(':', $db['pass'], 2);

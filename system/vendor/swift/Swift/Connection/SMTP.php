@@ -64,10 +64,10 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
    */
   protected $timeout = 15;
   /**
-   * A username to authenticate with
+   * A user_name to authenticate with
    * @var string
    */
-  protected $username = false;
+  protected $user_name = false;
   /**
    * A password to authenticate with
    * @var string
@@ -160,21 +160,21 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
     return $this->port;
   }
   /**
-   * Provide a username for authentication
-   * @param string The username
+   * Provide a user_name for authentication
+   * @param string The user_name
    */
   public function setUsername($user)
   {
     $this->setRequiresEHLO(true);
-    $this->username = $user;
+    $this->user_name = $user;
   }
   /**
-   * Get the username for authentication
+   * Get the user_name for authentication
    * @return string
    */
   public function getUsername()
   {
-    return $this->username;
+    return $this->user_name;
   }
   /**
    * Set the password for SMTP authentication
@@ -344,7 +344,7 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
     $log = Swift_LogContainer::getLog();
     if ($log->hasLevel(Swift_Log::LOG_EVERYTHING))
     {
-      $log->add("Trying to authenticate with username '" . $user . "'.");
+      $log->add("Trying to authenticate with user_name '" . $user . "'.");
     }
     //Load in defaults
     if (empty($this->authenticators))
@@ -405,13 +405,13 @@ class Swift_Connection_SMTP extends Swift_ConnectionBase
     
     //Server doesn't support authentication
     if (!$looks_supported && $tried == 0)
-      throw new Swift_ConnectionException("Authentication is not supported by the server but a username and password was given.");
+      throw new Swift_ConnectionException("Authentication is not supported by the server but a user_name and password was given.");
     
     if ($tried == 0)
       throw new Swift_ConnectionException("No authentication mechanisms were tried since the server did not support any of the ones loaded. " .
       "Loaded authenticators: [" . implode(", ", array_keys($this->authenticators)) . "]");
     else
-      throw new Swift_ConnectionException("Authentication failed using username '" . $user . "' and password '". str_repeat("*", strlen($pass)) . "'");
+      throw new Swift_ConnectionException("Authentication failed using user_name '" . $user . "' and password '". str_repeat("*", strlen($pass)) . "'");
   }
   /**
    * Try to close the connection

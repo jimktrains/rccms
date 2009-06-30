@@ -139,5 +139,20 @@ class ORM_Versioned_Core extends ORM {
 
 		return $status;
 	}
+	
+	public function version( $version = FALSE ){
+		if ( ! $this->loaded) return $this;
 
+		$query = $this->db
+			->where($this->foreign_key(), $this->object[$this->primary_key])
+			->where('version', $version)
+			->limit(1)
+			->get($this->table_name.'_versions');
+
+		if ($query->count()){
+			$this->load_values($query->result(FALSE)->current());
+		}
+
+		return $this;
+	}
 }

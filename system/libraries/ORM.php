@@ -697,8 +697,8 @@ class ORM_Core {
 	 * @chainable
 	 * @return  ORM
 	 */
-	public function save()
-	{
+	public function save(){
+		
 		if ( ! empty($this->changed))
 		{
 			$data = array();

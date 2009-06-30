@@ -17,6 +17,6 @@ $config['driver'] = 'native';
  * Driver options:
  * @param   null    native: no options
  * @param   string  sendmail: executable path, with -bs or equivalent attached
- * @param   array   smtp: hostname, (username), (password), (port), (auth), (encryption)
+ * @param   array   smtp: hostname, (user_name), (password), (port), (auth), (encryption)
  */
 $config['options'] = NULL;

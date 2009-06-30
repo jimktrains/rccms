@@ -19,9 +19,9 @@ Swift_ClassLoader::load("Swift_Authenticator");
 class Swift_Authenticator_LOGIN implements Swift_Authenticator
 {
   /**
-   * Try to authenticate using the username and password
+   * Try to authenticate using the user_name and password
    * Returns false on failure
-   * @param string The username
+   * @param string The user_name
    * @param string The password
    * @param Swift The instance of Swift this authenticator is used in
    * @return boolean

@@ -2,7 +2,7 @@
 /**
  * @package  Cache:Xcache
  *
- * Xcache administrator username.
+ * Xcache administrator user_name.
  */
 $config['PHP_AUTH_USER'] = 'kohana';
 

@@ -25,7 +25,7 @@
  */
 $config['default'] = array
 (
-	'key'    => 'K0H@NA+PHP_7hE-SW!FtFraM3w0R|<',
+	'key'    => 'R3dC010NY R0c|<5 My W0r1d11111111',
 	'mode'   => MCRYPT_MODE_NOFB,
 	'cipher' => MCRYPT_RIJNDAEL_128
 );

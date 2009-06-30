@@ -4,7 +4,7 @@
  *
  * Session driver name.
  */
-$config['driver'] = 'cookie';
+$config['driver'] = 'database';
 
 /**
  * Session storage parameter, used by drivers.
@@ -15,7 +15,7 @@ $config['storage'] = '';
  * Session name.
  * It must contain only alphanumeric characters and underscores. At least one letter must be present.
  */
-$config['name'] = 'kohanasession';
+$config['name'] = 'rc_session';
 
 /**
  * Session parameters to validate: user_agent, ip_address, expiration.

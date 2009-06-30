@@ -1,16 +1,10 @@
-# Turn on URL rewriting
-RewriteEngine On
+AddType application/xrds+xml .xrdf
 
-# Installation directory
+
+RewriteEngine On
 RewriteBase /
 
-# Protect application and system files from being viewed
 RewriteRule ^(application|modules|system) - [F,L]
 
-# Allow any files or directories that exist to be displayed directly
-RewriteCond %public/{REQUEST_FILENAME} -f
-RewriteCond %public/{REQUEST_FILENAME} -d
-RewriteRule .* public/$0 [PT,L]
-
-# Rewrite all other URLs to index.php/URL
-RewriteRule .* index.php/$0 [PT,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php/$1 [QSA,L]

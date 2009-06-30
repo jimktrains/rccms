@@ -1,14 +1,4 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
-/**
- * Abstract Auth driver, must be extended by all drivers.
- *
- * $Id: Auth.php 4346 2009-05-11 17:08:15Z zombor $
- *
- * @package    Auth
- * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
- */
 abstract class Auth_Driver {
 
 	// Session instance
@@ -23,8 +13,7 @@ abstract class Auth_Driver {
 	 * @param   array  configuration
 	 * @return  void
 	 */
-	public function __construct(array $config)
-	{
+	public function __construct(array $config){
 		// Load Session
 		$this->session = Session::instance();
 
@@ -35,12 +24,18 @@ abstract class Auth_Driver {
 	/**
 	 * Checks if a session is active.
 	 *
-	 * @param   string   role name (not supported)
+	 * @param   string   role name
+	 * @param   array    collection of role names
 	 * @return  boolean
 	 */
-	public function logged_in($role)
-	{
-		return isset($_SESSION[$this->config['session_key']]);
+	public function logged_in(){
+
+		$user = $this->session->get($this->config['session_key']);
+		if (is_object($user) AND $user instanceof User AND $user->loaded){
+			return TRUE;
+		}
+
+		return FALSE;
 	}
 
 	/**
@@ -49,42 +44,78 @@ abstract class Auth_Driver {
 	 *
 	 * @return  mixed
 	 */
-	public function get_user()
-	{
-		if ($this->logged_in(NULL))
-		{
+	public function get_user(){
+		if ($this->logged_in(NULL)){
 			return $_SESSION[$this->config['session_key']];
 		}
-
 		return FALSE;
 	}
 
 	/**
 	 * Logs a user in.
 	 *
-	 * @param   string   username
-	 * @param   string   password
+	 * @param   array   credentails
 	 * @param   boolean  enable auto-login
 	 * @return  boolean
 	 */
-	abstract public function login($username, $password, $remember);
+	abstract public function login(array $credentials, $remember);
 
 	/**
-	 * Forces a user to be logged in, without specifying a password.
+	 * Registers a user
+	 * 
+	 * @param string user_name
+	 * @param stirng email
+	 * @param array  credentials
+	 */
+	public function register($user_name, $email, $creds, $save = TRUE){
+		$user = ORM::factory('user');
+		$user->user_name = $user_name;
+		$user->email = $email;
+		if($save){
+			$user->save();
+		}
+		return $user;
+	}
+	/**
+	 * Forces a user to be logged in, without specifying a credentials.
 	 *
-	 * @param   mixed    username
+	 * @param   mixed    user_name
 	 * @return  boolean
 	 */
-	abstract public function force_login($username);
+	public function force_login($user){
+		if ( ! is_object($user)){
+			$user = ORM::factory('user', $user);
+		}
+
+		// Mark the session as forced, to prevent users from changing account information
+		$_SESSION['auth_forced'] = TRUE;
+
+		// Run the standard completion
+		$this->complete_login($user);
+	}
 
 	/**
-	 * Logs a user in, based on stored credentials, typically cookies.
-	 * Not supported by default.
+	 * Logs a user in, based on the authautologin cookie.
 	 *
 	 * @return  boolean
 	 */
-	public function auto_login()
-	{
+	public function auto_login(){
+		if ($token = cookie::get('authautologin')){
+			
+			$token = ORM::factory('user_token', $token);
+
+			if ($token->loaded AND $token->user->loaded){
+				if ($token->user_agent === sha1(Kohana::$user_agent)){
+					// Save the token to create a new unique token
+					$token->save();
+
+					cookie::set('authautologin', $token->token, $token->expires - time());
+					$this->complete_login($token->user);
+					return TRUE;
+				}
+				$token->delete();
+			}
+		}
 		return FALSE;
 	}
 
@@ -94,19 +125,19 @@ abstract class Auth_Driver {
 	 * @param   boolean  completely destroy the session
 	 * @return  boolean
 	 */
-	public function logout($destroy)
-	{
-		if ($destroy === TRUE)
-		{
-			// Destroy the session completely
+	public function logout($destroy){
+		if ($token = cookie::get('authautologin')){
+			cookie::delete('authautologin');
+			$token = ORM::factory('user_token', $token);
+			if ($token->loaded){
+				$token->delete();
+			}
+		}
+		if ($destroy === TRUE){
 			Session::instance()->destroy();
 		}
-		else
-		{
-			// Remove the user from the session
+		else{
 			$this->session->delete($this->config['session_key']);
-
-			// Regenerate session_id
 			$this->session->regenerate();
 		}
 
@@ -114,29 +145,34 @@ abstract class Auth_Driver {
 		return ! $this->logged_in(NULL);
 	}
 
-	/**
-	 * Get the stored password for a username.
-	 *
-	 * @param   mixed   username
-	 * @return  string
-	 */
-	abstract public function password($username);
 
 	/**
 	 * Completes a login by assigning the user to the session key.
 	 *
-	 * @param   string   username
+	 * @param   string   user_name
 	 * @return  TRUE
 	 */
-	protected function complete_login($user)
-	{
-		// Regenerate session_id
-		$this->session->regenerate();
+	protected function complete_login($user, $remember){
+		if ( ! is_object($user)){
+			$user = ORM::factory('user', $user);
+		}
+		
+		if ($remember === TRUE){
+			$token = ORM::factory('user_token');
+			$token->user_id = $user->id;
+			$token->expires = time() + $this->config['lifetime'];
+			$token->save();
+			cookie::set('authautologin', $token->token, $this->config['lifetime']);
+		}
 
-		// Store username in session
+		$user->logins += 1;
+		$user->last_login = time();
+		$user->save();
+		
+		$this->session->regenerate();
 		$_SESSION[$this->config['session_key']] = $user;
 
 		return TRUE;
 	}
 
-} // End Auth_Driver
+}

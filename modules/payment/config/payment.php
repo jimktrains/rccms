@@ -74,7 +74,7 @@ $config['Trident'] = array
 
 /**
  * PayPal Options:
- *  API_UserName - the username to use
+ *  API_UserName - the user_name to use
  *  API_Password - the password to use
  *  API_Signature - the api signature to use
  *  ReturnUrl - the URL to send the user to after they login with paypal
@@ -83,7 +83,7 @@ $config['Trident'] = array
  */
 $config['Paypal'] = array
 (
-	'USER'         => '-your-paypal-api-username',
+	'USER'         => '-your-paypal-api-user_name',
 	'PWD'          => '-your-paypal-api-password',
 	'SIGNATURE'    => '-your-paypal-api-security-signiature',
 	'ENDPOINT'     => 'https://api-3t.paypal.com/nvp',
@@ -121,7 +121,7 @@ $config['Paypal'] = array
 $config['Paypalpro'] = array
 (
 
-	'USER'         => '-your-paypal-api-username',
+	'USER'         => '-your-paypal-api-user_name',
 	'PWD'          => '-your-paypal-api-password',
 	'SIGNATURE'    => '-your-paypal-api-security-signiature',
 	'ENDPOINT'     => 'https://api-3t.paypal.com/nvp',

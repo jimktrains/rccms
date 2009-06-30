@@ -406,17 +406,17 @@ class EasySwift
   }
   /**
    * Authenticate with SMTP authentication
-   * @param string The SMTP username
+   * @param string The SMTP user_name
    * @param string The SMTP password
    * @return boolean
    * @throws Exception If the wrong connection is used
    */
-  public function authenticate($username, $password)
+  public function authenticate($user_name, $password)
   {
     if (method_exists($this->swift->connection, "runAuthenticators"))
     {
       try {
-        $this->swift->connection->runAuthenticators($username, $password, $this->swift);
+        $this->swift->connection->runAuthenticators($user_name, $password, $this->swift);
         return true;
       } catch (Swift_ConnectionException $e) {
         $this->setError("Authentication failed:<br />" . $e->getMessage());

@@ -9,9 +9,9 @@
  */
 
 /**
- * Driver to use for authentication. By default, LDAP and ORM are available.
+ * Driver to use for authentication.
  */
-$config['driver'] = 'ORM';
+$config['driver'] = 'Local';
 
 /**
  * Type of hash to use for passwords. Any algorithm supported by the hash function
