@@ -1,24 +1,24 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
-class ACL_User extends ACL_Base {	
-	static public function add_resource_for_entity($res_id, $privilege = ACL_Base::READ, $entity = ACL_Base::ALL){
-		parent::('user', $res_id, $privilege, $entity);
+class ACL_User_Model extends ACL_Base_Model {	
+	static public function add_resource_for_entity($res_id, $entity = NULL, $privilege = NULL){
+		parent::add_resource_for_entity('user', $res_id, $entity, $privilege);
 	}
 	
 	static public function remove_resource_for_entity($res_id, $entity){
 		parent::remove_resource_for_entity('user', $res_id, $entity);
 	}
 	
-	static public function remove_resource($type, $res_id){
+	static public function remove_resource($res_id){
 		parent::remove_resource('user', $res_id);
 	}
 	
-	static public function can_read($type, $res_id, $ent){
-		parent::can_read('user', $res_id, $ent);
+	static public function can_read($res_id, $ent){
+		return parent::can_read('user', $res_id, $ent);
 	}
 	
-	static public function can_write($type, $res_id, $ent){
-		parent::can_write('user', $res_id, $ent);
+	static public function can_write($res_id, $ent){
+		return parent::can_write('user', $res_id, $ent);
 	}
 	
 	static public function set_read($res_id, $ent, $read=TRUE){

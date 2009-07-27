@@ -58,6 +58,38 @@ class Welcome_Controller extends Template_Controller {
 	}
 
 	public function index(){
+		ORM::factory('ACL_Base');
+		ORM::factory('ACL_User');
+
+		ORM::factory('Item');
+		ORM::factory('Text');
+		ORM::factory('TTL_Sums');
+		
+		if(Auth::instance()->get_user()){
+			echo Auth::instance()->get_user()->user_name;
+		}else{
+			echo "Not logged in";
+		}
+		echo "<br/><br/><br/>";
+		ACL_User_Model::add_resource_for_entity(2,5,ACL_Base_Model::$READ);
+		var_dump(ACL_User_Model::can_read(2, 5));
+		var_dump(ACL_User_Model::can_write(2, 5));
+		
+		$b = new Text_Model();
+		$b->text = "HI";
+		$b->save();
+		
+		$i = new Item_Model();
+		$i->body = $b;
+		$i->save();
+		echo "T:".$i->body->text;
+		
+		$b->text = "Ugh";
+		$b->save();
+		
+		
+		echo "T:".$i->body->text;
+		
 		$this->template->content = new View('welcome_content');
 
 		$this->template->title = 'Welcome to Kohana!';
