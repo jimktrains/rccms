@@ -1,4 +1,3 @@
-<<<<<<< HEAD:.htaccess
 AddType application/xrds+xml .xrdf
 
 
@@ -9,12 +8,3 @@ RewriteRule ^(application|modules|system) - [F,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php/$1 [QSA,L]
-=======
-RewriteEngine on
-RewriteBase /
-# Hide the application and system directories by redirecting the request to index.php
-RewriteRule ^(application|system|\.svn) index.php/$1 [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [QSA,L]
->>>>>>> d1820c69f526205428b481a5d333f6e657ccfb16:.htaccess
