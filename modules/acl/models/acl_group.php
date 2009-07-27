@@ -1,9 +1,9 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
-class ACL_User_Model extends ACL_Base_Model {
+class ACL_User extends ACL_Base {
 	
-	static public function add_resource_for_entity($res_id, $entity = NULL, $privilege = NULL){
-		parent::add_resource_for_entity('group', $res_id, $entity, $privilege);
+	static public function add_resource_for_entity($res_id, $privilege = ACL_Base::READ, $entity = ACL_Base::ALL){
+		parent::('group', $res_id, $privilege, $entity);
 	}
 	
 	static public function remove_resource_for_entity($res_id, $entity){

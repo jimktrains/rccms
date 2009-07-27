@@ -31,7 +31,7 @@ abstract class Auth_Driver {
 	public function logged_in(){
 
 		$user = $this->session->get($this->config['session_key']);
-		if (is_object($user) AND $user instanceof User_Model AND $user->loaded){
+		if (is_object($user) AND $user instanceof User AND $user->loaded){
 			return TRUE;
 		}
 
@@ -45,9 +45,8 @@ abstract class Auth_Driver {
 	 * @return  mixed
 	 */
 	public function get_user(){
-
-		if ($this->logged_in()){
-			return $this->session->get($this->config['session_key']);
+		if ($this->logged_in(NULL)){
+			return $_SESSION[$this->config['session_key']];
 		}
 		return FALSE;
 	}
@@ -171,8 +170,8 @@ abstract class Auth_Driver {
 		$user->save();
 		
 		$this->session->regenerate();
-		$this->session->set($this->config['session_key'], $user);
-		$this->session->set("rc_ugh", "ugh");
+		$_SESSION[$this->config['session_key']] = $user;
+
 		return TRUE;
 	}
 
