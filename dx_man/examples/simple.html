@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Simple Example : DX Auth User Guide</title>
+
+<style type='text/css' media='all'>@import url('../userguide.css');</style>
+<link rel='stylesheet' type='text/css' media='all' href='../userguide.css' />
+
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+
+<meta http-equiv='expires' content='-1' />
+<meta http-equiv= 'pragma' content='no-cache' />
+<meta name='robots' content='all' />
+<meta name='author' content='Dexcell' />
+<meta name='description' content='DX Auth User Guide' />
+
+</head>
+<body>
+
+<!-- START NAVIGATION -->
+<div id="nav"><div id="nav_inner"><script type="text/javascript">create_menu('../');</script></div></div>
+<div id="nav2"><a name="top"></a><a href="javascript:void(0);" onclick="myHeight.toggle();"><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" title="Toggle Table of Contents" alt="Toggle Table of Contents" /></a></div>
+<div id="masthead">
+
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><h1>DX Auth User Guide Version 1.0</h1></td>
+<td id="breadcrumb_right"><a href="../toc.html">Table of Contents Page</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+
+
+<!-- START BREADCRUMB -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="http://dexcell.shinsengumiteam.com/dx_auth/">DX Auth Home</a> &nbsp;&#8250;&nbsp;
+<a href="../index.html">User Guide Home</a> &nbsp;&#8250;&nbsp;
+Simple Example
+</td>
+<td id="searchbox"><form method="get" action="http://www.google.com/search"><input type="hidden" name="as_sitesearch" id="as_sitesearch" value="dexcell.shinsengumiteam.com/dx_auth/" />Search User Guide&nbsp; <input type="text" class="input" style="width:200px;" name="q" id="q" size="31" maxlength="255" value="" />&nbsp;<input type="submit" class="submit" name="sa" value="Go" /></form></td>
+</tr>
+</table>
+<!-- END BREADCRUMB -->
+
+<br clear="all" />
+
+
+<!-- START CONTENT -->
+<div id="content">
+
+
+<h1>Simple example</h1>
+
+<p>Before trying the example make sure you have follow <a href="../installation/index.html">installation</a> instruction first.</p>
+
+<p>Using DX Auth library it's pretty straight forward and simple,
+for example let's create a class named Auth in Auth controller.</p>
+
+<pre name="code" class="php">
+class Auth extends Controller
+{
+	function Auth()
+	{
+		parent::Controller();
+		// Load library
+		$this->load->library('DX_Auth');
+	}
+	
+	function login()
+	{
+		// Login using username 'test' and password 'helloworld'
+		$this->dx_auth->login('test', 'helloworld');
+	}
+	
+	function logout()
+	{
+		// Logout user
+		$this->dx_auth->logout();
+	}
+	
+	function register()
+	{
+		// Register a user with username 'john', password 'johnpassword', and email 'john@yourmail.com'
+		if ($user = $this->dx_auth->register('john', 'johnpassword', 'john@yourmail.com'))
+		{
+			echo 'Welcome '.$user->username;
+		}
+		else
+		{
+			echo 'Failed to register';
+		}
+	}
+	
+	function hello()
+	{
+		// Check if user is logged in or not
+		if ($this->dx_auth->is_logged_in())
+		{
+			echo 'Hello world';
+		}
+		else
+		{
+			echo 'Not logged in';
+		}
+	}
+}
+
+</pre>
+
+<p>By just looking these example, i think you already get a grip how easy and simple to use DX Auth library.<br/>
+If you are interested, here is the more <a href="advanced.html">advanced example</a>.
+</p>
+</div>
+<!-- END CONTENT -->
+
+<div id="footer">
+<p><a href="#top">Top of Page</a></p>
+<p><a href="http://dexcell.shinsengumiteam.com/dx_auth/">DX Auth</a> &nbsp;&middot;&nbsp; Copyright &#169; 2008 &nbsp;&middot;&nbsp; <a href="http://dexcell.shinsengumiteam.com/">Dexcell</a></p>
+</div>
+
+<link type="text/css" rel="stylesheet" href="../SyntaxHighlighter.css"></link>
+<script language="javascript" src="../nav/shCore.js"></script>
+<script language="javascript" src="../nav/shBrushPhp.js"></script>
+<script language="javascript">
+dp.SyntaxHighlighter.ClipboardSwf = '../nav/clipboard.swf';
+dp.SyntaxHighlighter.HighlightAll('code');
+</script>
+</body>
+</html>
